@@ -1,0 +1,67 @@
+---
+
+# Confluence version supported
+_confluence_download:
+  7.3.5:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.3.5.tar.gz"
+    checksum: "sha1:55a957a01383d2f68a7bc1878110cb5ec3dc5e32"
+  7.3.4:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.3.4.tar.gz"
+    checksum: "sha1:fdb928fffa7adad94b3032a83eb741a3daae0422"
+  7.3.3:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.3.3.tar.gz"
+    checksum: "sha1:5ee3f2b3b409fe4b50d6c0fb64c5274cae04a418"
+  7.3.2:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.3.3.tar.gz"
+    checksum: "sha1:f0f7a862474509e8cdd716e60ff2c3653d78f872"
+  7.3.1:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.3.1.tar.gz"
+    checksum: "sha1:88caceb90a6c32b3f1d8986cb3091d6af4cdceab"
+  7.2.2:
+    url: "https://product-downloads.atlassian.com/software/stash/downloads/atlassian-confluence-7.2.2.tar.gz"
+    checksum: "sha1:c67f3abb10ec2977542a30771221f5b068475aed"
+  7.2.0:
+    url: "https://product-downloads.atlassian.com/software/stash/downloads/atlassian-confluence-7.2.0.tar.gz"
+    checksum: "sha1:be9f5123374cb7d89932b03338f05c2d520a73ed"
+  7.1.2:
+    url: "https://product-downloads.atlassian.com/software/stash/downloads/atlassian-confluence-7.1.2.tar.gz"
+    checksum: "sha1:6c570c22928d904e75646015eb41f8aee035ca53"
+  7.1.1:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.1.1.tar.gz"
+    checksum: "sha1:39e331d35398998556e95a07db468c7a9aea9597"
+  6.15.10:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.15.10.tar.gz"
+    checksum: "sha1:34e669f36d3178d7de4d05223b920530272f94a1"
+  6.14.3:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.14.3.tar.gz"
+    checksum: "sha1:cf058420f460409f15acf893848f15f0142fb531"
+  6.13.11:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.13.11.tar.gz"
+    checksum: "sha1:b8d7817353b20a5be349d75718220afd3127bc69"
+  6.12.4:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.12.4.tar.gz"
+    checksum: "sha1:407d1d8f6887e824db1250fd874debad2c33ed51"
+  6.11.2:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.11.2.tar.gz"
+    checksum: "sha1:e3b03fd68bc4f5010917f0d8e9c98d60399cdc87"
+  6.10.3:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-6.10.3.tar.gz"
+    checksum: "sha1:00480eeaca1c2fb362585cdce1b713145ff4b988"
+  5.10.9:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-5.10.9.tar.gz"
+    checksum: "sha1:9624bcb6279998a6c5fb1d126f96b57624e23ed5"
+  5.9.14:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-5.9.14.tar.gz"
+    checksum: "sha1:42fc2ede3417e1db326cd69cbc93b810f27e82b8"
+
+# Mysql Connector version supported
+_mysql_jdbc_download:
+  5.1.48:
+    url: "https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.48.tar.gz"
+    checksum: "sha1:a8067480d7d7e4a975771e08b48b64de18837341"
+
+# Postgres Connector version supported
+_postgresql_jdbc_download:
+  42.2.10:
+    url: "https://jdbc.postgresql.org/download/postgresql-42.2.10.jar"
+    checksum: "sha1:338af492789fd198dbd52735a22b1946030ecc96"

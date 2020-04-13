@@ -1,0 +1,92 @@
+---
+
+# Confluence version.
+confluence_version: "7.3.5"
+
+# Confluence download details.
+confluence_download: "{{ _confluence_download[confluence_version] }}"
+
+# Confluence archice download destination folder
+confluence_download_dest: "/var/cache/ansible/"
+
+# MySQL JDBC version.
+confluence_mysql_jdbc_version: "5.1.48"
+
+# MySQL JDBC download details.
+confluence_mysql_jdbc_download: "{{ _mysql_jdbc_download[confluence_mysql_jdbc_version] }}"
+
+# PostgreSQL JDBC version.
+confluence_postgresql_jdbc_version: "42.2.10"
+
+# PostgreSQL JDBC download details.
+confluence_postgresql_jdbc_download: "{{ _postgresql_jdbc_download[confluence_postgresql_jdbc_version] }}"
+
+# Owner and group for Confluence.
+confluence_owner: "root"
+confluence_group: "root"
+confluence_shell: "/usr/sbin/nologin"
+confluence_create_home: false
+confluence_owner_system: true
+
+# Confluence home directory.
+confluence_home: "/var/atlassian/application-data/confluence"
+
+# Confluence installation directory.
+confluence_catalina: "/opt/atlassian/confluence"
+
+# JVM minimal and maximum memory usage.
+confluence_jvm_minimum_memory: "1024m"
+confluence_jvm_maximum_memory: "1024m"
+
+# Proxy and context path setup.
+confluence_catalina_connector_connexion_timeout: 20000
+confluence_catalina_connector_scheme: "http"
+confluence_catalina_connector_secure: false
+confluence_catalina_connector_ssl_enabled: false
+confluence_catalina_connector_ssl_implementation_jsse: false
+confluence_catalina_connector_ssl_certificate_file: ""
+confluence_catalina_connector_ssl_key_file: ""
+confluence_catalina_connector_ssl_keystore_file: ""
+confluence_catalina_connector_ssl_keystore_pass: ""
+confluence_catalina_connector_ssl_keystore_alias: ""
+confluence_catalina_connector_port: 8080
+confluence_catalina_connector_redirect_port: 8443
+confluence_catalina_context_path: "/"
+confluence_catalina_connector_proxyname: ""
+# confluence_catalina_connector_proxyport: 80
+confluence_catalina_connector_ajp_port: 8009
+confluence_catalina_connector_proxy_ajp: false
+
+# Session timeout.
+confluence_session_timeout: "300"
+
+
+# Atlassian Support recommended JVM arguments.
+confluence_jvm_support_recommended_args: >-
+  -Datlassian.plugins.enable.wait=300
+  -XX:+UnlockExperimentalVMOptions
+
+# Confluence backup home
+confluence_backup_home: "/var/atlassian/application-backup/confluence"
+
+# Confluence extra properties
+confluence_extra_properties: []
+# - key: plugin.auth-crowd.sso.enabled
+#   value: false
+# - key: avatar.gravatar.default
+#   value: "mm"
+# - key: avatar.max.size
+#   value: 1048576
+# - key: db.pool.size.idle
+#   value: 0
+# - key: db.pool.size.max
+#   value: 80
+# - key: jdbc.driver
+#   value: com.mysql.Driver
+# - key: jdbc.url
+#   value: jdbc:mysql://localhost:3306/confluence
+# - key: jdbc.user
+#   value: confluence
+# - key: jdbc.password
+#   value: confluence
+# .....

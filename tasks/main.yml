@@ -1,0 +1,214 @@
+---
+
+# Include main vars
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Include main variables"
+  include_vars: "../vars/main.yml"
+  tags: confluence
+
+# Include OS Disribution specific variables
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Include OS Disribution specific variables"
+  include_vars: "{{ lookup('first_found', _params) }}"
+  vars:
+    _params:
+      files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+      paths:
+        - "../vars"
+  ignore_errors: true
+  tags: confluence
+
+# Include OS Distribution specific tasks
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Include OS Distribution specific tasks"
+  include_tasks: "{{ lookup('first_found', _params) }}"
+  vars:
+    _params:
+      files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+      paths:
+        - "."
+  ignore_errors: true
+  tags: confluence
+
+# Find User in Passwd Database
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Find Confluence Owner in passwd database"
+  getent:
+    database: passwd
+    key: "{{ confluence_owner }}"
+    fail_key: false
+
+# Find Group in Group Database
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Find Confluence Owner group in groups database"
+  getent:
+    database: group
+    key: "{{ confluence_group }}"
+    fail_key: false
+
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Define commons facts for roles"
+  set_fact:
+    confluence_owner_exists: "{{ getent_passwd[confluence_owner] != None }}"
+    confluence_group_exists: "{{ getent_group[confluence_group] != None }}"
+    _confluence_create_home: "{{ '--create-home' if confluence_create_home else '' }}"
+    _confluence_owner_system: "{{ '--system' if confluence_owner_system else '' }}"
+    _confluence_jdbc_driver: "{{ confluence_extra_properties | selectattr('key', 'equalto', 'jdbc.driver')\
+    | map(attribute='value') | list | first | default('') }}"
+    _confluence_jdbc_url: "{{ confluence_extra_properties | selectattr('key', 'equalto', 'jdbc.url')\
+    | map(attribute='value') | list | first | default('') }}"
+    _confluence_jdbc_user: "{{ confluence_extra_properties | selectattr('key', 'equalto', 'jdbc.user')\
+    | map(attribute='value') | list | first | default('') }}"
+    _confluence_jdbc_password: "{{ confluence_extra_properties | selectattr('key', 'equalto', 'jdbc.password')\
+    | map(attribute='value') | list | first | default('') }}"
+    _confluence_download_dest: "{{ confluence_download_dest | regex_replace('\\/$', '') }}"
+    _confluence_proxy_enabled: "{{ (confluence_catalina_connector_proxyname | length > 0) and \
+    (confluence_catalina_connector_proxyport is defined) }}"
+
+# Ensure confluence owner group exists
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Ensure confluence owner group exists"
+  group:
+    name: "{{ confluence_group }}"
+    system: true
+    state: present
+  tags: confluence
+  when:
+    - not confluence_group_exists|bool
+
+# Ensure confluence owner exists
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Ensure confluence owner exists"
+  shell:
+  args:
+    cmd: "useradd {{ confluence_owner }} --home {{ confluence_home }} --shell {{ confluence_shell }} \
+     -g {{ confluence_group }} {{ _confluence_owner_system }} {{ _confluence_create_home }}"
+  tags:
+    - confluence
+    - molecule-idempotence-notest
+  when:
+    - not confluence_owner_exists|bool
+
+# Prepare required directories
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Prepare required directories"
+  file:
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0755') }}"
+    state: "{{ item.state | default('directory') }}"
+  loop:
+    - { dest: "/etc/init.d" }
+    - { dest: "/lib/systemd/system" }
+    - { dest: "{{ _confluence_download_dest }}" }
+    - dest: "{{ confluence_catalina }}"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+    - dest: "{{ confluence_home }}"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+    - dest: "{{ confluence_backup_home }}"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+  tags: confluence
+
+# Download required resources
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Download required resources"
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ _confluence_download_dest }}/{{ item.url | basename }}"
+    checksum: "{{ item.checksum }}"
+    timeout: 300
+  loop:
+    - "{{ confluence_download }}"
+    - "{{ confluence_mysql_jdbc_download }}"
+    - "{{ confluence_postgresql_jdbc_download }}"
+  register: get_url_result
+  until: get_url_result is succeeded
+  tags: confluence
+
+# Unarchive Confluence and driver to install location
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Unarchive Confluence and driver to install location"
+  shell: |
+    set -o pipefail
+    rm -rf {{ confluence_catalina }} && mkdir -p {{ confluence_catalina }}
+    cd {{ confluence_catalina }}
+    TMP_DIR="`mktemp -d`" \
+      && tar -zx -C $TMP_DIR -f {{ _confluence_download_dest }}/{{ confluence_download.url | basename }} \
+      && cp -rfT $TMP_DIR/* . \
+      && rm -rf $TMP_DIR
+    cd {{ confluence_catalina }}/app/WEB-INF/lib
+    rm -rf *mysql*.jar
+    TMP_DIR="`mktemp -d`" \
+      && tar -zx -C $TMP_DIR -f {{ _confluence_download_dest }}/{{ confluence_mysql_jdbc_download.url | basename }} \
+      && mv $TMP_DIR/*/*mysql*-bin.jar . \
+      && rm -rf $TMP_DIR
+    cd {{ confluence_catalina }}/app/WEB-INF/lib
+    rm -rf *postgresql*.jar
+    cp {{ _confluence_download_dest }}/{{ confluence_postgresql_jdbc_download.url | basename }} .
+    chown -Rf {{ confluence_owner }}:{{ confluence_group }} {{ confluence_catalina }}
+    chmod 0755 {{ confluence_catalina }} {{ confluence_catalina }}/bin
+  args:
+    executable: "/bin/bash"
+  when: get_url_result is changed
+  tags: confluence
+
+# Install templates files
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Install templates files"
+  template:
+    dest: "{{ item.dest }}"
+    src: "{{ item.src | default('./templates' + item.dest + '.j2') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
+    force: "{{ item.force | default(true) }}"
+  loop:
+    - dest: "/etc/init.d/confluence"
+      mode: "0755"
+    - dest: "/lib/systemd/system/confluence.service"
+    - dest: "{{ confluence_catalina }}/bin/setenv.sh"
+      src: "./templates/opt/atlassian/confluence/bin/setenv.sh.j2"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+      mode: "0755"
+    - dest: "{{ confluence_catalina }}/bin/user.sh"
+      src: "./templates/opt/atlassian/confluence/bin/user.sh.j2"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+      mode: "0755"
+    - dest: "{{ confluence_catalina }}/bin/setjre.sh"
+      src: "./templates/opt/atlassian/confluence/bin/setjre.sh.j2"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+      mode: "0755"
+    - dest: "{{ confluence_catalina }}/confluence/WEB-INF/classes/confluence-init.properties"
+      src: "./templates/opt/atlassian/confluence/web-inf/classes/confluence-init.properties.j2"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+      mode: "0755"
+    - dest: "{{ confluence_catalina }}/conf/server.xml"
+      src: "./templates/opt/atlassian/confluence/conf/server.xml.j2"
+      owner: "{{ confluence_owner }}"
+      group: "{{ confluence_group }}"
+      mode: "0755"
+  notify:
+    - systemctl daemon-reload
+    - confluence restart
+  tags: confluence
+
+# Force handler execution
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Force handler execution"
+  meta: flush_handlers
+  tags: confluence
+
+# Enable service
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Enable service"
+  service:
+    name: "confluence"
+    state: "started"
+    enabled: true
+  tags:
+    - confluence
+    - molecule-idempotence-notest

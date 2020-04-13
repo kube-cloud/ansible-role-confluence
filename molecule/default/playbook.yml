@@ -1,0 +1,47 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+    - name: "Include confluence role"
+      import_role:
+        name: ansible-role-confluence
+      vars:
+        confluence_version: "7.3.5"
+        confluence_owner: "root"
+        confluence_group: "root"
+        confluence_shell: "/usr/sbin/nologin"
+        confluence_create_home: false
+        confluence_owner_system: true
+        confluence_catalina: "/opt/atlassian/confluence"
+        confluence_home: "/var/atlassian/applicationdata/confluence"
+        confluence_jvm_minimum_memory: "256m"
+        confluence_jvm_maximum_memory: "512m"
+        confluence_catalina_connector_scheme: "http"
+        confluence_catalina_connector_secure: "false"
+        confluence_catalina_context_path: "/"
+        confluence_catalina_connector_port: 8080
+        confluence_properties_file_generation: true
+        confluence_mysql_jdbc_version: "5.1.48"
+        confluence_postgresql_jdbc_version: "42.2.10"
+        confluence_properties_file_name: "confluence.properties"
+        confluence_extra_properties:
+          - key: "plugin.auth-crowd.sso.enabled"
+            value: "false"
+          - key: "avatar.gravatar.default"
+            value: "mm"
+          - key: "avatar.max.size"
+            value: 1048576
+          - key: "db.pool.size.idle"
+            value: 0
+          - key: "db.pool.size.max"
+            value: 80
+          - key: "jmx.enabled"
+            value: true
+          - key: "page.max.branches"
+            value: 100
+          - key: "page.max.commits"
+            value: 100
+          - key: "password.reset.validity.period"
+            value: 4320

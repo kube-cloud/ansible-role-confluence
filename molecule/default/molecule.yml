@@ -1,0 +1,48 @@
+---
+dependency:
+    name: galaxy
+    options:
+        role-file: molecule/default/requirement.yml
+        ignore-certs: true
+        ignore-errors: true
+driver:
+    name: docker
+lint: |
+    yamllint .
+platforms:
+    - name: ${MOLECULE_DISTRO:-ubuntu16}
+      image: "kubecloudsas/docker-ansible-test:${MOLECULE_DISTRO:-ubuntu16}"
+      command: ${MOLECULE_DOCKER_COMMAND:-""}
+      volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      privileged: true
+      pre_build_image: true
+
+provisioner:
+    name: ansible
+    lint:
+        name: ansible-lint
+        options:
+            force-color: true
+    playbooks:
+        converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
+
+scenario:
+    name: default
+    test_sequence:
+        - lint
+        - dependency
+        - syntax
+        - destroy
+        - create
+        - prepare
+        - converge
+        - idempotence
+        - side_effect
+        - verify
+        - cleanup
+        - destroy
+verifier:
+    name: testinfra
+    lint:
+        name: flake8

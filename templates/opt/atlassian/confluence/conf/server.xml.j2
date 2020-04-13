@@ -1,0 +1,108 @@
+<Server port="8005" shutdown="SHUTDOWN">
+    <Listener className="org.apache.catalina.startup.VersionLoggerListener"/>
+    <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on"/>
+    <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
+    <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+    <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
+
+    <Service name="Catalina">
+    	
+        {% if _confluence_proxy_enabled|bool and not confluence_catalina_connector_ssl_enabled %}
+		<!-- Confluence connector unsecured and behind Reverse Proxy (NB: Relaxing chars because of JRASERVER-67974) -->
+        <Connector	port="${catalina.connector.port}"
+        			maxThreads="150" 
+        			minSpareThreads="25" 
+        			connectionTimeout="${catalina.connector.connexionTimeout}" 
+        			enableLookups="false"
+        			maxHttpHeaderSize="8192"
+        			protocol="HTTP/1.1"
+        			useBodyEncodingForURI="true"
+        			redirectPort="${catalina.connector.redirect.port}"
+        			scheme="${catalina.connector.scheme}" 
+        			secure="${catalina.connector.secure}"
+        			proxyName="${catalina.connector.proxyName}"
+        			proxyPort="${catalina.connector.proxyPort}"
+        			acceptCount="100"
+        			disableUploadTimeout="true"
+        			bindOnInit="false"/>
+		{% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled and not confluence_catalina_connector_ssl_implementation_jsse %}
+		<!-- Confluence connector secured and behind reverse proxy and SSL APR (Apache Portable Runtime - OpenSSL) Enabled (NB: Relaxing chars because of JRASERVER-67974) -->
+        <Connector	port="${catalina.connector.port}"
+        			maxThreads="150" 
+        			minSpareThreads="25" 
+        			connectionTimeout="${catalina.connector.connexionTimeout}" 
+        			enableLookups="false"
+        			maxHttpHeaderSize="8192"
+        			protocol="HTTP/1.1"
+        			useBodyEncodingForURI="true"
+        			scheme="https" 
+        			secure="true"
+        			SSLEnabled="true"
+        			SSLCertificateFile="${catalina.connector.ssl.certificate.file}"
+        			SSLCertificateKeyFile="${catalina.connector.ssl.key.file}"
+        			SSLVerifyClient="none"
+        			acceptCount="100"
+        			disableUploadTimeout="true"
+        			bindOnInit="false"/>
+        {% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_sslenabled and confluence_catalina_connector_ssl_implementation_jsse %}
+		<!-- Confluence connector secured and behind reverse proxy and SSL JSSE (Java Secure Socket Extension - KeySore) Enabled (NB: Relaxing chars because of JRASERVER-67974) -->
+        <Connector	port="${catalina.connector.port}"
+        			maxThreads="150" 
+        			minSpareThreads="25" 
+        			connectionTimeout="${catalina.connector.connexionTimeout}" 
+        			enableLookups="false"
+        			maxHttpHeaderSize="8192"
+        			protocol="HTTP/1.1"
+        			useBodyEncodingForURI="true"
+        			scheme="https" 
+        			secure="true"
+        			SSLEnabled="true"
+        			clientAuth="false"
+        			keystoreFile="${catalina.connector.ssl.keystore.file}"
+        			keystorePass="${catalina.connector.ssl.keystoreFile.pass}"
+        			keyAlias="${catalina.connector.ssl.keystoreFile.alias}"
+        			acceptCount="100"
+        			disableUploadTimeout="true"
+        			bindOnInit="false"/>
+        {% else %}
+        <!-- Default connector -->
+        <Connector	port="${catalina.connector.port}"
+        			maxThreads="150" 
+        			minSpareThreads="25" 
+        			connectionTimeout="${catalina.connector.connexionTimeout}" 
+        			enableLookups="false"
+        			maxHttpHeaderSize="8192"
+        			protocol="HTTP/1.1"
+        			useBodyEncodingForURI="true"
+        			redirectPort="${catalina.connector.redirect.port}"
+        			scheme="${catalina.connector.scheme}" 
+        			secure="${catalina.connector.secure}"
+        			acceptCount="100"
+        			disableUploadTimeout="true"
+        			bindOnInit="false"/>
+		{% endif %}
+		
+        {% if _confluence_proxy_enabled|bool and confluence_catalina_connector_proxy_ajp|bool %}
+		<!-- Confluence with behind proxy with AJP (NB: Relaxing chars because of JRASERVER-67974) -->
+        <Connector	port="${catalina.connector.ajp.port}"
+        			URIEncoding="UTF-8" 
+        			enableLookups="false" 
+        			protocol="AJP/1.3"/>
+        {% endif %}
+        
+        <Engine name="Standalone" defaultHost="localhost" debug="0">
+            <Host name="localhost" debug="0" appBase="webapps" unpackWARs="true" autoDeploy="false" startStopThreads="4">
+                <Context path="" docBase="../confluence" debug="0" reloadable="false" useHttpOnly="true">
+                    <!-- Logging configuration for Confluence is specified in confluence/WEB-INF/classes/log4j.properties -->
+                    <Manager pathname=""/>
+                    <Valve className="org.apache.catalina.valves.StuckThreadDetectionValve" threshold="60"/>
+                </Context>
+
+                <Context path="${confluence.context.path}/synchrony-proxy" docBase="../synchrony-proxy" debug="0"
+                         reloadable="false" useHttpOnly="true">
+                    <Valve className="org.apache.catalina.valves.StuckThreadDetectionValve" threshold="60"/>
+                </Context>
+            </Host>
+        </Engine>
+    </Service>
+</Server>
