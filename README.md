@@ -3,7 +3,7 @@
 [![Travis](https://img.shields.io/travis/com/kube-cloud/ansible-role-confluence/master?style=flat)](https://travis-ci.com/kube-cloud/ansible-role-confluence)
 [![GitHub release](https://img.shields.io/github/release/kube-cloud/ansible-role-confluence.svg)](https://github.com/kube-cloud/ansible-role-confluence)
 [![GitHub license](https://img.shields.io/github/license/kube-cloud/ansible-role-confluence.svg)](https://github.com/kube-cloud/ansible-role-confluence/blob/master/LICENSE)
-[![Ansible Role](https://img.shields.io/ansible/role/d/46827.svg?style=flat)](https://galaxy.ansible.com/kube-cloud/confluence)
+[![Ansible Role](https://img.shields.io/ansible/role/d/47855.svg?style=flat)](https://galaxy.ansible.com/kube-cloud/confluence)
 
 Ansible Role for Atlassian Confluence Installation.
 
