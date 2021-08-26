@@ -7,7 +7,7 @@
 
     <Service name="Catalina">
     	
-        {% if _confluence_proxy_enabled|bool and not confluence_catalina_connector_ssl_enabled %}
+        {% if _confluence_proxy_enabled|bool and not confluence_catalina_connector_ssl_enabled|bool %}
 		<!-- Confluence connector unsecured and behind Reverse Proxy (NB: Relaxing chars because of JRASERVER-67974) -->
         <Connector	port="${catalina.connector.port}"
         			maxThreads="150" 
@@ -19,13 +19,13 @@
         			useBodyEncodingForURI="true"
         			redirectPort="${catalina.connector.redirect.port}"
         			scheme="${catalina.connector.scheme}" 
-        			secure="${catalina.connector.secure}"
+        			secure="false"
         			proxyName="${catalina.connector.proxyName}"
         			proxyPort="${catalina.connector.proxyPort}"
         			acceptCount="100"
         			disableUploadTimeout="true"
         			bindOnInit="false"/>
-		{% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled and not confluence_catalina_connector_ssl_implementation_jsse %}
+		{% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled|bool and not confluence_catalina_connector_ssl_implementation_jsse|bool %}
 		<!-- Confluence connector secured and behind reverse proxy and SSL APR (Apache Portable Runtime - OpenSSL) Enabled (NB: Relaxing chars because of JRASERVER-67974) -->
         <Connector	port="${catalina.connector.port}"
         			maxThreads="150" 
@@ -37,14 +37,14 @@
         			useBodyEncodingForURI="true"
         			scheme="https" 
         			secure="true"
-        			SSLEnabled="true"
+        			SSLEnabled="false"
         			SSLCertificateFile="${catalina.connector.ssl.certificate.file}"
         			SSLCertificateKeyFile="${catalina.connector.ssl.key.file}"
         			SSLVerifyClient="none"
         			acceptCount="100"
         			disableUploadTimeout="true"
         			bindOnInit="false"/>
-        {% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled and confluence_catalina_connector_ssl_implementation_jsse %}
+        {% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled|bool and confluence_catalina_connector_ssl_implementation_jsse|bool %}
 		<!-- Confluence connector secured and behind reverse proxy and SSL JSSE (Java Secure Socket Extension - KeySore) Enabled (NB: Relaxing chars because of JRASERVER-67974) -->
         <Connector	port="${catalina.connector.port}"
         			maxThreads="150" 
@@ -54,8 +54,8 @@
         			maxHttpHeaderSize="8192"
         			protocol="HTTP/1.1"
         			useBodyEncodingForURI="true"
-        			scheme="https" 
-        			secure="true"
+        			scheme="${catalina.connector.scheme}" 
+        			secure="${catalina.connector.secure}"
         			SSLEnabled="true"
         			clientAuth="false"
         			keystoreFile="${catalina.connector.ssl.keystore.file}"
