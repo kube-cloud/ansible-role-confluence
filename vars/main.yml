@@ -70,7 +70,6 @@ _confluence_download:
 _mysql_jdbc_download:
   8.0.26:
     url: "https://cdn.mysql.com//Downloads/Connector-J/mysql-connector-java-8.0.26.tar.gz"
-    dest: "{{ ansible_user_dir }}/.ansible/tmp/mysql-connector-java-8.0.26.tar.gz"
     checksum: "sha1:a3b8e9b3a13cab628373028ceb5ed390eb68d615"
   5.1.48:
     url: "https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.48.tar.gz"
