@@ -134,7 +134,7 @@
     dest: "{{ item }}"
     mode: "0777"
     state: "directory"
-  with_item:
+  with_items:
     - "/tmp/temp-confluence"
     - "/tmp/temp-mysql-driver"
 
