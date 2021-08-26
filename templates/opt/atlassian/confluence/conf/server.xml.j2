@@ -44,7 +44,7 @@
         			acceptCount="100"
         			disableUploadTimeout="true"
         			bindOnInit="false"/>
-        {% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_sslenabled and confluence_catalina_connector_ssl_implementation_jsse %}
+        {% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled and confluence_catalina_connector_ssl_implementation_jsse %}
 		<!-- Confluence connector secured and behind reverse proxy and SSL JSSE (Java Secure Socket Extension - KeySore) Enabled (NB: Relaxing chars because of JRASERVER-67974) -->
         <Connector	port="${catalina.connector.port}"
         			maxThreads="150" 
