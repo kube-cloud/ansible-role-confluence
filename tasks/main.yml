@@ -129,27 +129,48 @@
   until: get_url_result is succeeded
   tags: confluence
 
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Create Temporary Directories"
+  file:
+    dest: "{{ item }}"
+    mode: "0777"
+    state: "directory"
+  with_item:
+    - "/tmp/temp-confluence"
+    - "/tmp/temp-mysql-driver"
+
 # Unarchive Confluence and driver to install location
 - name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Unarchive Confluence and driver to install location"
   shell: |
     set -o pipefail
-    rm -rf {{ confluence_catalina }} && mkdir -p {{ confluence_catalina }}
-    cd {{ confluence_catalina }}
-    TMP_DIR="`mktemp -d`" \
-      && tar -zx -C $TMP_DIR -f {{ _confluence_download_dest }}/{{ confluence_download.url | basename }} \
-      && cp -rfT $TMP_DIR/* . \
-      && rm -rf $TMP_DIR
-    cd {{ confluence_catalina }}/confluence/WEB-INF/lib
-    rm -rf *mysql*.jar
-    TMP_DIR="`mktemp -d`" \
-      && tar -zx -C $TMP_DIR -f {{ _confluence_download_dest }}/{{ confluence_mysql_jdbc_download.url | basename }} \
-      && ls $TMP_DIR \
-      && mv $TMP_DIR/*/*mysql-*{{ mysql_jdbc_version }}.jar . \
-      && rm -rf $TMP_DIR
-    cd {{ confluence_catalina }}/confluence/WEB-INF/lib
-    rm -rf *postgresql*.jar
-    cp {{ _confluence_download_dest }}/{{ confluence_postgresql_jdbc_download.url | basename }} .
-    chown -Rf {{ confluence_owner }}:{{ confluence_group }} {{ confluence_catalina }}
+    rm -rf {{ confluence_catalina }} && \
+    mkdir -p {{ confluence_catalina }} && \
+    tar -zx -C /tmp/temp-confluence -f {{ _confluence_download_dest }}/{{ confluence_download.url | basename }} && \
+    cp -rfT /tmp/temp-confluence/* {{ confluence_catalina }}/
+  args:
+    executable: "/bin/bash"
+  when: get_url_result is changed
+  tags: confluence
+
+# Unarchive MySQL driver to install location
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Unarchive MySql driver to LIB Location"
+  shell: |
+    set -o pipefail
+    rm -rf {{ confluence_catalina }}/confluence/WEB-INF/lib/*mysql*.jar && \
+    mkdir -p {{ confluence_catalina }} && \
+    tar -zx -C /tmp/temp-mysql-driver -f {{ _confluence_download_dest }}/{{ confluence_mysql_jdbc_download.url | basename }} && \
+    cp -rfT /tmp/temp-mysql-driver/* {{ confluence_catalina }}/confluence/WEB-INF/lib/
+  args:
+    executable: "/bin/bash"
+  when: get_url_result is changed
+  tags: confluence
+
+# Unarchive Postgres Driver to LIB Location
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Unarchive Confluence and driver to install location"
+  shell: |
+    set -o pipefail
+    rm -rf {{ confluence_catalina }}/confluence/WEB-INF/lib/*postgresql*.jar && \
+    cp {{ _confluence_download_dest }}/{{ confluence_postgresql_jdbc_download.url | basename }} {{ confluence_catalina }}/confluence/WEB-INF/lib/ && \
+    chown -Rf {{ confluence_owner }}:{{ confluence_group }} {{ confluence_catalina }} && \
     chmod 0755 {{ confluence_catalina }} {{ confluence_catalina }}/bin
   args:
     executable: "/bin/bash"
