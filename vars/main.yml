@@ -2,6 +2,18 @@
 
 # Confluence version supported
 _confluence_download:
+  7.13.0:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.13.0.tar.gz"
+    checksum: "sha1:b5e640ec319dcf2a2810b186acc4a1e65587c2b3"
+  7.10.2:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.10.2.tar.gz"
+    checksum: "sha1:b47c397eca5700787287f21a0ba8b6546dc5aaea"
+  7.4.11:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.4.11.tar.gz"
+    checksum: "sha1:eb33346e97d5fb2d3b9b74c659c27d970a593465"
+  7.4.6:
+    url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.4.6.tar.gz"
+    checksum: "sha1:9d5fa8537fe4138e90a18d9607ecaf4ba18e3552"
   7.3.5:
     url: "https://product-downloads.atlassian.com/software/confluence/downloads/atlassian-confluence-7.3.5.tar.gz"
     checksum: "sha1:55a957a01383d2f68a7bc1878110cb5ec3dc5e32"
