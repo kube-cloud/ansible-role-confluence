@@ -165,7 +165,7 @@
   tags: confluence
 
 # Unarchive Postgres Driver to LIB Location
-- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Unarchive Confluence and driver to install location"
+- name: "({{ ansible_distribution }}) CONFLUENCE::MAIN - Unarchive Postgres Driver to LIB Location"
   shell: |
     set -o pipefail
     rm -rf {{ confluence_catalina }}/confluence/WEB-INF/lib/*postgresql*.jar && \
