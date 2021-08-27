@@ -158,7 +158,7 @@
     rm -rf {{ confluence_catalina }}/confluence/WEB-INF/lib/*mysql*.jar && \
     mkdir -p {{ confluence_catalina }} && \
     tar -zx -C /tmp/temp-mysql-driver -f {{ _confluence_download_dest }}/{{ confluence_mysql_jdbc_download.url | basename }} && \
-    cp -rfT /tmp/temp-mysql-driver/*/*mysql-*{{ confluence_mysql_jdbc_version }}.jar {{ confluence_catalina }}/confluence/WEB-INF/lib/
+    cp -rfT /tmp/temp-mysql-driver/*/mysql-connector-java-{{ confluence_mysql_jdbc_version }}.jar {{ confluence_catalina }}/confluence/WEB-INF/lib/mysql-connector-java-{{ confluence_mysql_jdbc_version }}.jar
   args:
     executable: "/bin/bash"
   when: get_url_result is changed
