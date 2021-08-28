@@ -10,8 +10,8 @@
         {% if _confluence_proxy_enabled|bool and not confluence_catalina_connector_ssl_enabled|bool %}
 		<!-- Confluence connector unsecured and behind Reverse Proxy (NB: Relaxing chars because of JRASERVER-67974) -->
         <Connector	port="${catalina.connector.port}"
-        			maxThreads="150" 
-        			minSpareThreads="25" 
+        			maxThreads="{{ confluence_catalina_max_threads }}" 
+        			minSpareThreads="{{ confluence_catalina_min_spare_threads }}" 
         			connectionTimeout="${catalina.connector.connexionTimeout}" 
         			enableLookups="false"
         			maxHttpHeaderSize="8192"
@@ -28,8 +28,8 @@
 		{% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled|bool and not confluence_catalina_connector_ssl_implementation_jsse|bool %}
 		<!-- Confluence connector secured and behind reverse proxy and SSL APR (Apache Portable Runtime - OpenSSL) Enabled (NB: Relaxing chars because of JRASERVER-67974) -->
         <Connector	port="${catalina.connector.port}"
-        			maxThreads="150" 
-        			minSpareThreads="25" 
+        			maxThreads="{{ confluence_catalina_max_threads }}" 
+        			minSpareThreads="{{ confluence_catalina_min_spare_threads }}" 
         			connectionTimeout="${catalina.connector.connexionTimeout}" 
         			enableLookups="false"
         			maxHttpHeaderSize="8192"
@@ -47,8 +47,8 @@
         {% elif _confluence_proxy_enabled|bool and confluence_catalina_connector_ssl_enabled|bool and confluence_catalina_connector_ssl_implementation_jsse|bool %}
 		<!-- Confluence connector secured and behind reverse proxy and SSL JSSE (Java Secure Socket Extension - KeySore) Enabled (NB: Relaxing chars because of JRASERVER-67974) -->
         <Connector	port="${catalina.connector.port}"
-        			maxThreads="150" 
-        			minSpareThreads="25" 
+        			maxThreads="{{ confluence_catalina_max_threads }}" 
+        			minSpareThreads="{{ confluence_catalina_min_spare_threads }}" 
         			connectionTimeout="${catalina.connector.connexionTimeout}" 
         			enableLookups="false"
         			maxHttpHeaderSize="8192"
@@ -67,8 +67,8 @@
         {% else %}
         <!-- Default connector -->
         <Connector	port="${catalina.connector.port}"
-        			maxThreads="150" 
-        			minSpareThreads="25" 
+        			maxThreads="{{ confluence_catalina_max_threads }}" 
+        			minSpareThreads="{{ confluence_catalina_min_spare_threads }}" 
         			connectionTimeout="${catalina.connector.connexionTimeout}" 
         			enableLookups="false"
         			maxHttpHeaderSize="8192"
