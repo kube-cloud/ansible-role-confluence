@@ -103,6 +103,10 @@ CATALINA_OPTS="${JVM_SUPPORT_RECOMMENDED_ARGS:-"{{ confluence_jvm_support_recomm
 CATALINA_OPTS="-Xms${JVM_MINIMUM_MEMORY:-"{{ confluence_jvm_minimum_memory }}"} -Xmx${JVM_MAXIMUM_MEMORY:-"{{ confluence_jvm_maximum_memory }}"} -XX:+UseG1GC ${CATALINA_OPTS}"
 CATALINA_OPTS="${JVM_EXTRA_ARGS} ${CATALINA_OPTS}"
 
+{% if confluence_max_meta_space is defined %}
+CATALINA_OPTS="-XX:MaxMetaspaceSize={{ confluence_max_meta_space }} ${CATALINA_OPTS}"
+{% endif %}
+
 {% if confluence_custom_agent_path is defined %}
 CATALINA_OPTS="-javaagent:{{ confluence_custom_agent_path }} ${CATALINA_OPTS}"
 {% endif %}
