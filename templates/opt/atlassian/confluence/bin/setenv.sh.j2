@@ -107,6 +107,10 @@ CATALINA_OPTS="${JVM_EXTRA_ARGS} ${CATALINA_OPTS}"
 CATALINA_OPTS="-XX:MaxMetaspaceSize={{ confluence_max_meta_space }} ${CATALINA_OPTS}"
 {% endif %}
 
+{% if confluence_min_meta_space is defined %}
+CATALINA_OPTS="-XX:MetaspaceSize={{ confluence_min_meta_space }} ${CATALINA_OPTS}"
+{% endif %}
+
 {% if confluence_custom_agent_path is defined %}
 CATALINA_OPTS="-javaagent:{{ confluence_custom_agent_path }} ${CATALINA_OPTS}"
 {% endif %}
