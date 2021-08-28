@@ -107,6 +107,10 @@ CATALINA_OPTS="${JVM_EXTRA_ARGS} ${CATALINA_OPTS}"
 CATALINA_OPTS="-javaagent:{{ confluence_custom_agent_path }} ${CATALINA_OPTS}"
 {% endif %}
 
+{% if manage_jvm_enabled|bool is defined %}
+CATALINA_OPTS="-Dcom.sun.management.jmxremote.port={{ jmx_remote_port }} -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false ${CATALINA_OPTS}"
+{% endif %}
+
 export CATALINA_OPTS
 
 sed -i "s/\(<session-timeout>\).*\(<\/session-timeout>\)/\1${SESSION_TIMEOUT:-"{{ confluence_session_timeout }}"}\2/g" ${CONFLUENCE_CATALINA}/confluence/WEB-INF/web.xml

@@ -59,6 +59,9 @@ confluence_catalina_connector_proxy_ajp: false
 confluence_catalina_max_threads: 150
 confluence_catalina_min_spare_threads: 25
 
+# Manage JVM
+manage_jvm_enabled: true
+
 # Session timeout.
 confluence_session_timeout: "300"
 
