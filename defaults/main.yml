@@ -61,6 +61,7 @@ confluence_catalina_min_spare_threads: 25
 
 # Manage JVM
 manage_jvm_enabled: true
+jmx_remote_port: 9999
 
 # Session timeout.
 confluence_session_timeout: "300"
